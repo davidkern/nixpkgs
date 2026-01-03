@@ -30,6 +30,13 @@
       hash = "sha256-/jVT7+874LCeSF/pdNVTFoSOfRisSqxCJnt5/SGCXPQ=";
     })
     (fetchFromGitHub {
+      name = "freetype";
+      owner = "freetype";
+      repo = "freetype";
+      rev = "VER-2-14-1";
+      hash = "sha256-y/1F+lewcP1yyJ99US/L6kXnOedIV+2srk0UwbaUOzg=";
+    })
+    (fetchFromGitHub {
       name = "nfd";
       owner = "btzy";
       repo = "nativefiledialog-extended";

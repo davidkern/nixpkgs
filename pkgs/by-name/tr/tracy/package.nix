@@ -91,7 +91,6 @@ let
       ++ lib.optionals stdenv.cc.isClang [ stdenv.cc.cc.libllvm ];
 
       buildInputs = [
-        freetype
         onetbb
       ]
       ++ extraBuildInputs
@@ -183,6 +182,7 @@ in
         lib
         stdenv
         capstone
+        freetype
         wayland-protocols
         ;
     }
@@ -190,7 +190,7 @@ in
 
   tracy_0_12 = mkTracyPackage (
     import ./tracy-0.12.nix {
-      inherit fetchFromGitHub fetchFromGitLab;
+      inherit fetchFromGitHub fetchFromGitLab freetype;
     }
   );
 
