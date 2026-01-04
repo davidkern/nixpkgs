@@ -11,8 +11,10 @@ let
   # messages like these in the logs:
   # CPM: Adding package zstd@1.5.7 (v1.5.7 to /build/source/cpm_source_cache/zstd/dfd2e0b6e613dcf44911302708e636a8aee527d2)
   #
-  # If we pass git into nativeBuildDependencies and disable the no git patch, then the build logs also tell us
+  # If we pass git into nativeBuildDependencies, then the build logs also tell us
   # the repository that CPM tries to download the sources from
+  #
+  # Dependencies names for CPM are case-sensitive.
   cpmDeps = [
     {
       name = "zstd";
@@ -24,7 +26,7 @@ let
       };
     }
     {
-      name = "imgui";
+      name = "ImGui";
       src = fetchFromGitHub {
         owner = "ocornut";
         repo = "imgui";
@@ -42,7 +44,7 @@ let
       };
     }
     {
-      name = "ppqsort";
+      name = "PPQSort";
       src = fetchFromGitHub {
         owner = "GabTux";
         repo = "PPQSort";
@@ -60,8 +62,8 @@ let
       };
     }
     {
-      name = "packageproject.cmake";
       # Transitive from PPQSort
+      name = "PackageProject.cmake";
       src = fetchFromGitHub {
         owner = "TheLartians";
         repo = "PackageProject.cmake";
@@ -80,21 +82,10 @@ let
       };
     }
   ];
-
-  # Weird CPM Dep where ppqsort uses cpm to manage cpm itself
-  cpmDep = fetchurl {
-    url = "https://github.com/cpm-cmake/CPM.cmake/releases/download/v0.38.7/CPM.cmake";
-    hash = "sha256-g+XrcbK7uLHyrTjxlQKHoFdiTjhcI49gh/lM38RK+cU=";
-  };
-  # Combine all the dependencies into the cpm source cache, that gets copied into the build directory
 in
-runCommand "cpm-source-cache" { } (
-  ''
-    mkdir -p $out/cpm
-    cp --no-preserve=mode -r ${cpmDep} $out/cpm/CPM_0.38.7.cmake
-  ''
-  + (lib.strings.concatMapStringsSep "\n" (dep: ''
-    mkdir -p $out/${dep.name}/NIX_ORIGIN_HASH_STUB
-    cp --no-preserve=mode -r ${dep.src}/. $out/${dep.name}/NIX_ORIGIN_HASH_STUB
-  '') cpmDeps)
+runCommand "cpm-dependencies" { } (
+  lib.strings.concatMapStringsSep "\n" (dep: ''
+    mkdir -p $out/${dep.name}
+    cp --no-preserve=mode -r ${dep.src}/. $out/${dep.name}/
+  '') cpmDeps
 )
